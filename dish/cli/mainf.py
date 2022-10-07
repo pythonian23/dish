@@ -11,18 +11,6 @@ args: argparse.Namespace = ...
 config: dish.ConfigFile = ...
 
 
-def preinit(client: discord.Client) -> None:
-    ...
-
-
-async def postinit(client: discord.Client) -> None:
-    ...
-
-
-async def handler(client: discord.Message) -> bool:
-    return False
-
-
 def main():
     parse()
     check()
@@ -55,9 +43,6 @@ def configure():
 
     os.chdir(args.path)
     config = toml.load("config.toml", _dict=dish.ConfigFile)
-    config["preinit"] = preinit
-    config["postinit"] = postinit
-    config["handler"] = handler
 
 
 def run():

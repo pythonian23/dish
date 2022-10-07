@@ -10,4 +10,4 @@ class ConfigFile(typing.TypedDict):
     postinit: typing.Callable[[discord.Client], typing.Coroutine[typing.Any, typing.Any, None]]
     handler: typing.Callable[[discord.Message], typing.Coroutine[typing.Any, typing.Any, bool]]
 
-    dishes: typing.List[str | DishFile]
+    dishes: typing.List[DishFile | str]
