@@ -1,13 +1,13 @@
 import typing
 import discord
 
-from dish.config import Config
+from dish.configfile import ConfigFile
 
 
 class Bot(discord.Client):
-    def __init__(self, config: Config, **kwargs: typing.Any):
+    def __init__(self, config: ConfigFile, **kwargs: typing.Any):
         super().__init__(**kwargs)
-        self.config: Config = config
+        self.config: ConfigFile = config
 
     async def on_ready(self):
         await self.config["postinit"](self)

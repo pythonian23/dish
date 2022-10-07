@@ -8,7 +8,7 @@ import dish
 
 parser: argparse.ArgumentParser = ...
 args: argparse.Namespace = ...
-config: dish.Config = ...
+config: dish.ConfigFile = ...
 
 
 def preinit(client: discord.Client) -> None:
@@ -54,7 +54,7 @@ def configure():
     global config
 
     os.chdir(args.path)
-    config = toml.load("config.dish", _dict=dish.Config)
+    config = toml.load("config.toml", _dict=dish.ConfigFile)
     config["preinit"] = preinit
     config["postinit"] = postinit
     config["handler"] = handler
