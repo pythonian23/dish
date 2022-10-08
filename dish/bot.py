@@ -2,10 +2,8 @@ import shlex
 import subprocess
 import typing
 import discord
-import toml
 
-from dish.configfile import ConfigFile
-from dish.dishfile import DishFile
+from dish.configfile import ConfigFile, Dish
 
 
 async def _default_postinit(_):
@@ -22,15 +20,13 @@ class Bot(discord.Client):
             intents=discord.Intents(messages=True, message_content=True), **kwargs
         )
         self.config: ConfigFile = config
-        self.dishes: typing.Dict[str, DishFile]
+        self.dishes: typing.Dict[str, Dish]
         self._get_dishes()
 
     def _get_dishes(self):
-        self.dishes: typing.Dict[str, DishFile] = {}
-        for dish in self.config.get("dishes", []):
-            if isinstance(dish, str):
-                dish = toml.load(dish, _dict=DishFile)
-            self.dishes[dish["command"]] = dish
+        self.dishes: typing.Dict[str, Dish] = {}
+        for command, dish in self.config.get("dishes", {}).items():
+            self.dishes[command] = dish
             for alias in dish.get("aliases", []):
                 self.dishes[alias] = dish
 
