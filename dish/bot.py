@@ -1,3 +1,5 @@
+import shlex
+import subprocess
 import typing
 import discord
 import toml
@@ -16,28 +18,36 @@ async def _default_handler(_):
 
 class Bot(discord.Client):
     def __init__(self, config: ConfigFile, **kwargs: typing.Any):
-        super().__init__(**kwargs)
+        super().__init__(
+            intents=discord.Intents(messages=True, message_content=True), **kwargs
+        )
         self.config: ConfigFile = config
-        self.dishes: typing.List[DishFile]
+        self.dishes: typing.Dict[str, DishFile]
         self._get_dishes()
-        print(self.dishes)
 
     def _get_dishes(self):
-        self.dishes = []
+        self.dishes: typing.Dict[str, DishFile] = {}
         for dish in self.config.get("dishes", []):
             if isinstance(dish, str):
-                self.dishes.append(toml.load(dish, _dict=DishFile))
-            else:
-                self.dishes.append(dish)
+                dish = toml.load(dish, _dict=DishFile)
+            self.dishes[dish["command"]] = dish
+            for alias in dish.get("aliases", []):
+                self.dishes[alias] = dish
 
     async def on_ready(self):
         await self.config.get("postinit", _default_postinit)(self)
 
     async def on_message(self, message: discord.Message):
-        if await self.config.get("handler", lambda _: False)(message):
+        if await self.config.get("handler", _default_handler)(message):
             return
         if message.author == self.user:
             return
+
+        argv = shlex.split(message.content)
+        if argv[0] in self.dishes.keys():
+            argv = shlex.split(self.dishes[argv[0]]["run"]) + argv[1:]
+            proc = subprocess.run(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            await message.reply(proc.stdout.decode("utf-8"))
 
     def run(self):
         self.config.get("preinit", lambda _: None)(self)
