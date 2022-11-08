@@ -43,7 +43,12 @@ class Bot(discord.Client):
         if argv[0] in self.dishes.keys():
             argv = shlex.split(self.dishes[argv[0]]["run"]) + argv[1:]
             proc = subprocess.run(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            await message.reply(f"```ansi\n" + proc.stdout.decode("utf-8") + "\n```")
+            await message.reply(
+                f"```ansi\n"
+                + proc.stdout.decode("utf-8")
+                + proc.stderr.decode("utf-8")
+                + "\n```"
+            )
 
     def run(self):
         self.config.get("preinit", lambda _: None)(self)
