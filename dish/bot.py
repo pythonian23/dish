@@ -1,6 +1,7 @@
 import shlex
 import subprocess
 import typing
+
 import discord
 
 from dish.configfile import ConfigFile, Dish
