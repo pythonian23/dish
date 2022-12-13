@@ -6,7 +6,7 @@ import (
 
 type Dish struct {
 	Bot      Bot
-	Commands map[string]*Command
+	Commands map[string]Command
 }
 
 type Bot struct {
@@ -17,6 +17,8 @@ type Bot struct {
 type Command struct {
 	Command     []string
 	Args        bool
+	WhiteList   []string
+	BlackList   []string
 	Description string
 }
 
