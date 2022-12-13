@@ -1,1 +1,0 @@
-from .mainf import main
