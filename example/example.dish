@@ -1,3 +1,13 @@
 [Bot]
 token = "xxxx"
 status = "Heyo"
+
+[Commands.echo]
+command = ["echo"]
+args = true
+description = "Echoes a message."
+
+[Commands.readme]
+command = ["cat", "README.md"]
+args = false
+description = "Reads the README.md file."
