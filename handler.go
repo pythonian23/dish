@@ -7,13 +7,13 @@ import (
 	"github.com/mattn/go-shellwords"
 )
 
-func handle(s *discordgo.Session, m *discordgo.MessageCreate) {
+func handler(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
 
 	args, err := shellwords.Parse(m.Content)
-	if err != nil {
+	if logOnError(err) {
 		return
 	}
 	command, ok := dish.Commands[args[0]]
@@ -26,17 +26,18 @@ func handle(s *discordgo.Session, m *discordgo.MessageCreate) {
 		args = command.Command
 	}
 	result, err := command.Run(args)
-	if err != nil {
+	if logOnError(err) {
 		return
 	}
+
 	lines := bytes.Split(result, []byte{'\n'})
 	buf := &bytes.Buffer{}
 	msg, err := s.ChannelMessage(m.ChannelID, m.ID)
-	if err != nil {
+	if logOnError(err) {
 		return
 	}
-	for _, line := range lines {
-		if buf.Len()+len(line)+13 > 2000 {
+	for i, line := range lines {
+		if (buf.Len()+len(line)+13 > 2000) || (i == len(lines)-1) {
 			text := fmt.Sprintf("```ansi\n%s```", buf.String())
 			msg, err = s.ChannelMessageSendReply(m.ChannelID, text, msg.Reference())
 			if err != nil {
@@ -47,13 +48,5 @@ func handle(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		buf.Write(line)
 		buf.WriteByte('\n')
-	}
-	if buf.Len() > 0 {
-		text := fmt.Sprintf("```ansi\n%s```", buf.String())
-		msg, err = s.ChannelMessageSendReply(m.ChannelID, text, msg.Reference())
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
 	}
 }

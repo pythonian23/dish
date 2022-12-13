@@ -1,7 +1,6 @@
 package main
 
 import (
-	flag "github.com/spf13/pflag"
 	"os/exec"
 )
 
@@ -19,7 +18,6 @@ type Command struct {
 	Command     []string
 	Args        bool
 	Description string
-	flagSet     *flag.FlagSet
 }
 
 func (c *Command) Run(args []string) ([]byte, error) {
