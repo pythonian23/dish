@@ -1,6 +1,6 @@
 module github.com/pythonian23/dish
 
-go 1.19
+go 1.24.0
 
 require (
 	github.com/BurntSushi/toml v1.2.1
@@ -11,6 +11,6 @@ require (
 
 require (
 	github.com/gorilla/websocket v1.4.2 // indirect
-	golang.org/x/crypto v0.35.0 // indirect
-	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/crypto v0.45.0 // indirect
+	golang.org/x/sys v0.38.0 // indirect
 )
